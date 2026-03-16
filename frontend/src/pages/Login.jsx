@@ -16,7 +16,7 @@ export default function Login() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
       <h1 className="text-3xl font-bold mb-2 text-gray-800">민턴클로버 🏸</h1>
-      <p className="text-gray-500 mb-8">우리들만의 배드민턴 소모임 공간</p>
+      <p className="text-gray-500 mb-8">우리들만의 배드민턴 소모임</p>
       
       {/* onClick 이벤트를 달아줍니다 */}
       <button 

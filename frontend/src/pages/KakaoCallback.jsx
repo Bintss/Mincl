@@ -1,5 +1,5 @@
 // frontend/src/pages/KakaoCallback.jsx
-import { useEffect, useRef } from 'react'; // useRef 추가!
+import { useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -7,18 +7,18 @@ export default function KakaoCallback() {
   const [searchParams] = useSearchParams();
   const code = searchParams.get('code');
   const navigate = useNavigate();
-  
-  // 🚩 중복 호출 방지를 위한 깃발입니다.
   const isCalled = useRef(false); 
-
+  
   useEffect(() => {
-    // 코드가 있고, 아직 깃발이 안 꽂혀 있을 때만 실행!
     if (code && !isCalled.current) {
-      isCalled.current = true; // 실행하자마자 바로 깃발을 꽂아버립니다.
+      isCalled.current = true;
 
-      axios.post('http://127.0.0.1:8000/api/accounts/kakao/login/', { code: code })
+      // 🚩 로컬 주소(127.0.0.1) 대신 환경 변수를 사용하도록 수정!
+      // VITE_API_URL은 Vercel에 등록한 https://mintonclover.onrender.com 주소입니다.
+      const API_URL = import.meta.env.VITE_API_URL;
+
+      axios.post(`${API_URL}/api/accounts/kakao/login/`, { code: code })
         .then((res) => {
-          // 브라우저 금고(localStorage)에 유저 정보와 '역할'을 함께 저장!
           localStorage.setItem('userId', res.data.user_id);
           localStorage.setItem('nickname', res.data.nickname);
           localStorage.setItem('role', res.data.role);

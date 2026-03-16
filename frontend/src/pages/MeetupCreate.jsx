@@ -33,7 +33,7 @@ export default function MeetupCreate() {
     e.preventDefault();
     
     // 백엔드로 모임 생성 데이터 전송
-    axios.post('http://127.0.0.1:8000/api/meetups/', formData)
+    axios.post('${API_URL}/api/meetups/', formData)
       .then((res) => {
         alert('성공적으로 일정이 생성되었습니다! 🏸');
         navigate(`/meetup/${res.data.id}`); // 생성된 모임 상세 페이지로 바로 이동

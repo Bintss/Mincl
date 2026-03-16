@@ -21,19 +21,19 @@ export default function MemberManage() {
   }, [navigate, userRole]);
 
   const fetchUsers = () => {
-    axios.get('http://127.0.0.1:8000/api/accounts/users/')
+    axios.get(`${API_URL}/api/accounts/users/`)
       .then(res => setUsers(res.data))
       .catch(err => console.error("회원 목록 불러오기 실패:", err));
   };
 
   const handleRoleChange = (userId, newRole) => {
-    axios.patch(`http://127.0.0.1:8000/api/accounts/user/${userId}/`, { role: newRole })
+    axios.patch(`${API_URL}/api/accounts/user/${userId}/`, { role: newRole })
       .then(() => fetchUsers())
       .catch(err => console.error("권한 변경 실패:", err));
   };
 
   const handleLessonToggle = (userId, currentStatus) => {
-    axios.patch(`http://127.0.0.1:8000/api/accounts/user/${userId}/`, { is_taking_lessons: !currentStatus })
+    axios.patch(`${API_URL}/api/accounts/user/${userId}/`, { is_taking_lessons: !currentStatus })
       .then(() => fetchUsers())
       .catch(err => console.error("레슨 상태 변경 실패:", err));
   };
@@ -41,7 +41,7 @@ export default function MemberManage() {
   // 👇 1. 회원 삭제(강퇴) 함수 추가! (실수로 누르지 않게 경고창을 띄웁니다)
   const handleDeleteUser = (userId, nickname) => {
     if (window.confirm(`정말 ${nickname} 회원을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없으며, 해당 회원의 모든 모임 투표 내역도 함께 삭제됩니다.`)) {
-      axios.delete(`http://127.0.0.1:8000/api/accounts/user/${userId}/`)
+      axios.delete(`${API_URL}/api/accounts/user/${userId}/`)
         .then(() => {
           alert(`${nickname} 회원이 앱에서 삭제되었습니다.`);
           fetchUsers(); // 목록 새로고침

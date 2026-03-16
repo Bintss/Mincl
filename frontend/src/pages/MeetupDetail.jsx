@@ -42,8 +42,8 @@ export default function MeetupDetail() {
 
   const fetchData = async () => {
     try {
-      const meetupRes = await axios.get(`http://127.0.0.1:8000/api/meetups/${id}/`);
-      const attendanceRes = await axios.get(`http://127.0.0.1:8000/api/attendances/?meetup=${id}`);
+      const meetupRes = await axios.get(`${API_URL}/api/meetups/${id}/`);
+      const attendanceRes = await axios.get(`${API_URL}/api/attendances/?meetup=${id}`);
       setMeetup(meetupRes.data);
       setAttendances(attendanceRes.data);
     } catch (err) {
@@ -63,7 +63,7 @@ export default function MeetupDetail() {
     }
 
     if (myAttendance) {
-      axios.patch(`http://127.0.0.1:8000/api/attendances/${myAttendance.id}/`, { status })
+      axios.patch(`${API_URL}/api/attendances/${myAttendance.id}/`, { status })
         .then(res => {
           if (status === 'Attending' && res.data.status === 'Waitlisted') {
             alert('정원이 초과되어 대기 명단으로 변경되었습니다! ⏳');
@@ -72,7 +72,7 @@ export default function MeetupDetail() {
         })
         .catch(err => console.error(err));
     } else {
-      axios.post('http://127.0.0.1:8000/api/attendances/', {
+      axios.post('${API_URL}/api/attendances/', {
         meetup: id,
         user: currentUserId,
         status: status
@@ -94,7 +94,7 @@ export default function MeetupDetail() {
       return;
     }
 
-    axios.post('http://127.0.0.1:8000/api/attendances/', {
+    axios.post('${API_URL}/api/attendances/', {
       meetup: id,
       status: 'Attending',
       is_guest: true,
@@ -114,7 +114,7 @@ export default function MeetupDetail() {
 
   const handleDeleteAttendance = (attendanceId, name) => {
     if(window.confirm(`${name}님의 내역을 삭제하시겠습니까?`)) {
-      axios.delete(`http://127.0.0.1:8000/api/attendances/${attendanceId}/`)
+      axios.delete(`${API_URL}/api/attendances/${attendanceId}/`)
       .then(() => fetchData())
       .catch(err => console.error(err));
     }

@@ -6,13 +6,14 @@ import axios from 'axios';
 export default function Home() {
   const [meetups, setMeetups] = useState([]);
 
-  // 👇 브라우저 금고에서 내 역할을 꺼내서 운영진인지 확인합니다!
   const userRole = localStorage.getItem('role');
   const canManage = ['DEVELOPER', 'PRESIDENT', 'ADMIN'].includes(userRole);
 
   useEffect(() => {
-    // 백엔드에서 생성된 일정 목록을 가져옵니다.
-    axios.get('http://127.0.0.1:8000/api/meetups/')
+    // 🚩 로컬 주소 대신 환경 변수를 사용하도록 수정!
+    const API_URL = import.meta.env.VITE_API_URL;
+
+    axios.get(`${API_URL}/api/meetups/`)
       .then(res => setMeetups(res.data))
       .catch(err => console.error("일정 목록 불러오기 실패:", err));
   }, []);
@@ -24,7 +25,6 @@ export default function Home() {
         <h2 className="text-2xl font-bold text-gray-800">🏸 예정된 운동</h2>
       </div>
 
-      {/* 일정 목록 보여주기 */}
       <div className="space-y-4">
         {meetups.length === 0 ? (
           <div className="text-center text-gray-400 py-10">
@@ -50,7 +50,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* 👇 운영진(canManage)에게만 화면 오른쪽 아래에 떠 있는 둥근 '+' 버튼을 보여줍니다! */}
       {canManage && (
         <Link 
         to="/meetup/create" 

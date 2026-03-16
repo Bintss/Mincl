@@ -26,7 +26,7 @@ export default function MeetupEdit() {
     }
 
     // 기존 모임 데이터 불러오기
-    axios.get(`http://127.0.0.1:8000/api/meetups/${id}/`)
+    axios.get(`${API_URL}/api/meetups/${id}/`)
       .then(res => {
         const data = res.data;
         // HTML datetime-local 포맷(YYYY-MM-DDThh:mm)에 맞게 시간 문자열 자르기
@@ -55,7 +55,7 @@ export default function MeetupEdit() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // PUT 또는 PATCH 요청으로 수정된 데이터 보내기
-    axios.patch(`http://127.0.0.1:8000/api/meetups/${id}/`, formData)
+    axios.patch(`${API_URL}/api/meetups/${id}/`, formData)
       .then(() => {
         alert('일정이 성공적으로 수정되었습니다! ✨');
         navigate(`/meetup/${id}`); // 수정 완료 후 상세 페이지로 복귀

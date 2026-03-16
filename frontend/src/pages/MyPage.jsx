@@ -24,7 +24,7 @@ export default function MyPage() {
       return;
     }
     
-    axios.get(`http://127.0.0.1:8000/api/accounts/user/${userId}/`)
+    axios.get(`${API_URL}/api/accounts/user/${userId}/`)
       .then(res => {
         setProfile(res.data);
         setEditData({
@@ -38,7 +38,7 @@ export default function MyPage() {
   // 1. 레슨 여부 토글 버튼 (기존과 동일, 누르는 즉시 저장됨)
   const handleToggleLesson = () => {
     const newStatus = !profile.is_taking_lessons;
-    axios.patch(`http://127.0.0.1:8000/api/accounts/user/${userId}/`, {
+    axios.patch(`${API_URL}/api/accounts/user/${userId}/`, {
       is_taking_lessons: newStatus
     })
     .then(res => {
@@ -55,7 +55,7 @@ export default function MyPage() {
 
   // 3. '저장하기' 버튼 눌렀을 때 작동
   const handleSave = () => {
-    axios.patch(`http://127.0.0.1:8000/api/accounts/user/${userId}/`, editData)
+    axios.patch(`${API_URL}/api/accounts/user/${userId}/`, editData)
       .then(res => {
         setProfile({ 
           ...profile, 
