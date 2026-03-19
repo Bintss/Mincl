@@ -22,7 +22,8 @@ export default function Navbar() {
         {/* ✅ 텍스트 대신 로고 이미지 */}
         <Link to="/" className="flex items-center gap-2">
           <img src="/logo.png" alt="민턴클로버 로고" className="h-9 w-auto" />
-        </Link>민턴클로버
+          <span className="text-lg font-bold text-green-600">민턴클로버</span>
+        </Link>
 
         <div className="flex gap-4 text-sm font-semibold text-gray-600 items-center">
           <Link to="/" className="hover:text-green-500 transition-colors">일정</Link>
