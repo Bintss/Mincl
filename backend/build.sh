@@ -2,9 +2,18 @@
 set -o errexit
 
 pip install -r requirements.txt
-
-# DB 마이그레이션 먼저! (이게 성공해야 앱이 돌아갑니다)
 python manage.py migrate
-
-# 정적 파일 모으기 (에러 방지를 위해 --no-input 추가)
 python manage.py collectstatic --no-input
+
+python manage.py shell
+from django.contrib.auth import get_user_model
+User = get_user_model()
+import os
+username = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
+email = os.environ.get('DJANGO_SUPERUSER_EMAIL', '')
+password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
+if password and not User.objects.filter(username=username).exists():
+    User.objects.create_superuser(username=username, email=email, password=password)
+    print(f'✅ Superuser {username} 생성 완료')
+else:
+    print('✅ Superuser 이미 존재하거나 PASSWORD 미설정 → 건너뜀')
