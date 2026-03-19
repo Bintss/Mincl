@@ -6,6 +6,7 @@ import axios from 'axios';
 export default function MeetupCreate() {
   const navigate = useNavigate();
   const currentUserId = localStorage.getItem('userId');
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (!currentUserId) {
@@ -31,12 +32,11 @@ export default function MeetupCreate() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // 백엔드로 모임 생성 데이터 전송
-    axios.post('${API_URL}/api/meetups/', formData)
+    // ✅ 작은따옴표 → 백틱으로 수정
+    axios.post(`${API_URL}/api/meetups/`, formData)
       .then((res) => {
         alert('성공적으로 일정이 생성되었습니다! 🏸');
-        navigate(`/meetup/${res.data.id}`); // 생성된 모임 상세 페이지로 바로 이동
+        navigate(`/meetup/${res.data.id}`);
       })
       .catch((err) => {
         console.error("일정 생성 오류:", err);

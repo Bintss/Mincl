@@ -6,16 +6,11 @@ import axios from 'axios';
 export default function MyPage() {
   const navigate = useNavigate();
   const userId = localStorage.getItem('userId');
-  
+  const API_URL = import.meta.env.VITE_API_URL; // ✅ 추가
+
   const [profile, setProfile] = useState(null);
-  
-  // 수정 모드인지 확인하는 상태값
   const [isEditing, setIsEditing] = useState(false);
-  // 수정 중인 데이터를 담아두는 임시 저장소
-  const [editData, setEditData] = useState({
-    grade: '',
-    phone_number: ''
-  });
+  const [editData, setEditData] = useState({ grade: '', phone_number: '' });
 
   useEffect(() => {
     if (!userId) {
@@ -23,58 +18,35 @@ export default function MyPage() {
       navigate('/login');
       return;
     }
-    
     axios.get(`${API_URL}/api/accounts/user/${userId}/`)
       .then(res => {
         setProfile(res.data);
-        setEditData({
-          grade: res.data.grade,
-          phone_number: res.data.phone_number
-        });
+        setEditData({ grade: res.data.grade, phone_number: res.data.phone_number });
       })
       .catch(err => console.error("프로필 정보 불러오기 실패:", err));
   }, [userId, navigate]);
 
-  // 1. 레슨 여부 토글 버튼 (기존과 동일, 누르는 즉시 저장됨)
   const handleToggleLesson = () => {
     const newStatus = !profile.is_taking_lessons;
-    axios.patch(`${API_URL}/api/accounts/user/${userId}/`, {
-      is_taking_lessons: newStatus
-    })
-    .then(res => {
-      setProfile({ ...profile, is_taking_lessons: res.data.is_taking_lessons });
-    })
-    .catch(err => console.error("상태 변경 실패:", err));
+    axios.patch(`${API_URL}/api/accounts/user/${userId}/`, { is_taking_lessons: newStatus })
+      .then(res => setProfile({ ...profile, is_taking_lessons: res.data.is_taking_lessons }))
+      .catch(err => console.error("상태 변경 실패:", err));
   };
 
-  // 2. 수정 모드에서 텍스트 입력할 때 작동
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEditData({ ...editData, [name]: value });
   };
 
-  // 3. '저장하기' 버튼 눌렀을 때 작동
   const handleSave = () => {
     axios.patch(`${API_URL}/api/accounts/user/${userId}/`, editData)
       .then(res => {
-        setProfile({ 
-          ...profile, 
-          grade: res.data.grade, 
-          phone_number: res.data.phone_number 
-        });
-        setIsEditing(false); // 수정 모드 종료
+        setProfile({ ...profile, grade: res.data.grade, phone_number: res.data.phone_number });
+        setIsEditing(false);
         alert('내 정보가 성공적으로 수정되었습니다! ✨');
       })
       .catch(err => console.error("정보 수정 실패:", err));
   };
-
-  // 급수를 예쁘게 보여주기 위한 변환기
-  const gradeDisplay = {
-    'S': 'S조', 'A': 'A조', 'B': 'B조', 
-    'C': 'C조', 'D': 'D조', 'BEGINNER': '초심'
-  };
-
-  if (!profile) return <div className="p-6 text-center text-gray-500">정보를 불러오는 중...</div>;
 
   return (
     <div className="max-w-md mx-auto p-6">

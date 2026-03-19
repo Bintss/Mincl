@@ -6,6 +6,7 @@ import axios from 'axios';
 export default function MemberManage() {
   const navigate = useNavigate();
   const userRole = localStorage.getItem('role');
+  const API_URL = import.meta.env.VITE_API_URL;
   
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');

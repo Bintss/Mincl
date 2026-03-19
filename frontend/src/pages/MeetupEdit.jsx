@@ -7,7 +7,8 @@ export default function MeetupEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
   const userRole = localStorage.getItem('role');
-
+  const API_URL = import.meta.env.VITE_API_URL;
+  
   const [formData, setFormData] = useState({
     title: '',
     meetup_type: 'REGULAR',

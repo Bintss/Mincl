@@ -6,7 +6,8 @@ import axios from 'axios';
 export default function MeetupDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [meetup, setMeetup] = useState(null);
   const [attendances, setAttendances] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,7 +73,7 @@ export default function MeetupDetail() {
         })
         .catch(err => console.error(err));
     } else {
-      axios.post('${API_URL}/api/attendances/', {
+      axios.post(`${API_URL}/api/attendances/`, {
         meetup: id,
         user: currentUserId,
         status: status
@@ -94,7 +95,7 @@ export default function MeetupDetail() {
       return;
     }
 
-    axios.post('${API_URL}/api/attendances/', {
+    axios.post(`${API_URL}/api/attendances/`, {
       meetup: id,
       status: 'Attending',
       is_guest: true,
