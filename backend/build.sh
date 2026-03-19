@@ -5,7 +5,7 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py collectstatic --no-input
 
-python manage.py shell
+python manage.py shell << EOF
 from django.contrib.auth import get_user_model
 User = get_user_model()
 import os
@@ -17,3 +17,4 @@ if password and not User.objects.filter(username=username).exists():
     print(f'✅ Superuser {username} 생성 완료')
 else:
     print('✅ Superuser 이미 존재하거나 PASSWORD 미설정 → 건너뜀')
+EOF
