@@ -6,9 +6,10 @@ import axios from 'axios';
 export default function MyPage() {
   const navigate = useNavigate();
   const userId = localStorage.getItem('userId');
-  const API_URL = import.meta.env.VITE_API_URL; // ✅ 추가
-
+  const API_URL = import.meta.env.VITE_API_URL;
+  
   const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true); // ✅ 로딩 상태 추가
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({ grade: '', phone_number: '' });
 
@@ -18,15 +19,22 @@ export default function MyPage() {
       navigate('/login');
       return;
     }
+    
     axios.get(`${API_URL}/api/accounts/user/${userId}/`)
       .then(res => {
         setProfile(res.data);
         setEditData({ grade: res.data.grade, phone_number: res.data.phone_number });
       })
-      .catch(err => console.error("프로필 정보 불러오기 실패:", err));
+      .catch(err => {
+        console.error("프로필 정보 불러오기 실패:", err);
+        alert("프로필을 불러올 수 없습니다.");
+        navigate('/');
+      })
+      .finally(() => setLoading(false)); // ✅ 성공/실패 모두 로딩 종료
   }, [userId, navigate]);
 
   const handleToggleLesson = () => {
+    if (!profile) return; // ✅ 방어 코드
     const newStatus = !profile.is_taking_lessons;
     axios.patch(`${API_URL}/api/accounts/user/${userId}/`, { is_taking_lessons: newStatus })
       .then(res => setProfile({ ...profile, is_taking_lessons: res.data.is_taking_lessons }))
@@ -48,6 +56,16 @@ export default function MyPage() {
       .catch(err => console.error("정보 수정 실패:", err));
   };
 
+  const gradeDisplay = {
+    'S': 'S조', 'A': 'A조', 'B': 'B조',
+    'C': 'C조', 'D': 'D조', 'BEGINNER': '초심'
+  };
+
+  // ✅ 로딩 중이거나 profile 없으면 일찍 반환 (JSX 진입 자체를 막음)
+  if (loading || !profile) {
+    return <div className="p-6 text-center text-gray-500">정보를 불러오는 중...</div>;
+  }
+
   return (
     <div className="max-w-md mx-auto p-6">
       <div className="flex items-center justify-between mb-6">
@@ -55,35 +73,28 @@ export default function MyPage() {
           <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-gray-800 mr-4">← 뒤로</button>
           <h2 className="text-2xl font-bold text-gray-800">👤 마이페이지</h2>
         </div>
-        
-        {/* 수정 모드 켜고 끄는 버튼 */}
         {!isEditing ? (
-          <button onClick={() => setIsEditing(true)} className="text-sm font-semibold text-blue-500 hover:text-blue-700">
-            정보 수정
-          </button>
+          <button onClick={() => setIsEditing(true)} className="text-sm font-semibold text-blue-500 hover:text-blue-700">정보 수정</button>
         ) : (
-          <button onClick={() => setIsEditing(false)} className="text-sm font-semibold text-gray-500 hover:text-gray-700">
-            취소
-          </button>
+          <button onClick={() => setIsEditing(false)} className="text-sm font-semibold text-gray-500 hover:text-gray-700">취소</button>
         )}
       </div>
-      
+
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <div className="mb-5">
           <p className="text-sm text-gray-500 mb-1">닉네임</p>
           <p className="font-bold text-lg text-gray-800">{profile.nickname}</p>
         </div>
-        
+
         <div className="mb-5 border-b pb-5">
           <p className="text-sm text-gray-500 mb-1">나의 권한</p>
           <p className="font-semibold text-blue-600">
-            {profile.role === 'MEMBER' ? '일반회원' : 
-             profile.role === 'ADMIN' ? '운영진' : 
+            {profile.role === 'MEMBER' ? '일반회원' :
+             profile.role === 'ADMIN' ? '운영진' :
              profile.role === 'PRESIDENT' ? '모임장' : '개발자'}
           </p>
         </div>
 
-        {/* 내 정보 (급수 & 연락처) 표시 영역 */}
         <div className="mb-6 space-y-4">
           <div>
             <p className="text-sm text-gray-500 mb-1">배드민턴 급수</p>
@@ -111,7 +122,6 @@ export default function MyPage() {
           </div>
         </div>
 
-        {/* 저장 버튼 (수정 모드일 때만 보임) */}
         {isEditing && (
           <button onClick={handleSave} className="w-full bg-blue-500 text-white font-bold py-3 rounded-xl hover:bg-blue-600 transition mb-6 shadow-sm">
             변경 사항 저장하기
@@ -124,8 +134,7 @@ export default function MyPage() {
               <h3 className="font-bold text-gray-800">레슨 수강 여부</h3>
               <p className="text-xs text-gray-500 mt-1">정기운동 생성 시 자동으로 참석 처리됩니다.</p>
             </div>
-            
-            <button 
+            <button
               onClick={handleToggleLesson}
               className={`w-14 h-8 flex items-center rounded-full p-1 transition-colors duration-300 focus:outline-none ${profile.is_taking_lessons ? 'bg-green-500' : 'bg-gray-300'}`}
             >
